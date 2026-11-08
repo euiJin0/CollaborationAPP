@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>콜라비 - 콜라보할 땐, 콜라비!</title>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family: 'Jua', 'Nunito', -apple-system, sans-serif;
+  background: linear-gradient(135deg, #a8edbb 0%, #c8b4f8 100%);
+  min-height:100vh; display:flex; align-items:center;
+  justify-content:center; padding:24px;
+}
+:root {
+  --g:#C5E7A5; --gd:#7CB858; --gt:#3a6e1a;
+  --p:#D8C8F4; --pd:#9575CD; --pt:#5b2fa0;
+  --bg:#F7F7FB; --bd:#EBEBF0;
+  --tx:#1c1c1e; --t2:#48484A; --t3:#9A9AA8;
+}
+.device {
+  width:390px; height:844px; border-radius:56px;
+  overflow:hidden; position:relative; background:#fff;
+  box-shadow: 0 0 0 2px rgba(255,255,255,.18), 0 0 0 12px #1c1c1e,
+              0 0 0 13px #3a3a3c, 0 50px 120px rgba(0,0,0,.5);
+  flex-shrink:0;
+}
+.notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:130px; height:38px; background:#1c1c1e; border-radius:0 0 22px 22px; z-index:1000; }
+.screen { position:absolute; inset:0; background:#fff; display:none; flex-direction:column; overflow:hidden; }
+.screen.active { display:flex; }
+.status { height:50px; display:flex; align-items:flex-end; padding:0 28px 9px; flex-shrink:0; position:relative; z-index:10; }
+.status-time { font-size:15px; font-weight:800; color:#1c1c1e; font-family:'Nunito',sans-serif; }
+.status-icons { margin-left:auto; font-size:13px; display:flex; gap:5px; align-items:center; }
+
+/* ── NEW SOPHISTICATED LOGO ── */
+.logo-svg-wrap { display:flex; align-items:center; gap:8px; }
+.logo-svg-wrap svg { display:block; }
+.brand-txt { font-family:'Jua',sans-serif; font-size:23px; letter-spacing:-0.5px; color:#1c1c1e; }
+.brand-txt-lg { font-family:'Jua',sans-serif; font-size:34px; letter-spacing:-1px; color:#1c1c1e; margin-top:4px; }
+
+/* SPLASH */
+#splash { background:linear-gradient(155deg,#1c1c2e 0%,#2d2b45 100%); align-items:center; justify-content:center; }
+.sp-icon { width:120px; height:120px; display:flex; align-items:center; justify-content:center; margin-bottom:22px; }
+.sp-tag { font-size:13px; color:rgba(255,255,255,.55); margin-top:10px; font-weight:400; font-family:'Nunito',sans-serif; letter-spacing:.3px; }
+.sp-btn { margin-top:40px; border:none; border-radius:16px; padding:17px 56px; font-size:15px; font-family:'Nunito',sans-serif; font-weight:800; cursor:pointer; color:#1c1c2e; background:linear-gradient(135deg,#C5E7A5,#9575CD); box-shadow:0 8px 26px rgba(149,117,205,.35); transition:.15s; letter-spacing:-.2px; }
+.sp-btn:active { transform:scale(.97); }
+#splash .brand-txt-lg { color:#fff; font-family:'Jua',sans-serif; }
+
+/* ONBOARD */
+.ob-wrap { padding:40px 26px; display:flex; flex-direction:column; gap:20px; }
+.ob-h { font-family:'Jua',sans-serif; font-size:28px; color:var(--tx); line-height:1.35; }
+.ob-s { font-size:14px; color:var(--t3); line-height:1.7; font-family:'Nunito',sans-serif; }
+.ob-card { border-radius:28px; padding:26px 24px; cursor:pointer; position:relative; overflow:hidden; transition:.18s; }
+.ob-card:active { transform:scale(.98); }
+.ob-card.cr { background:linear-gradient(145deg,#C5E7A5,#a8d97c); }
+.ob-card.ow { background:linear-gradient(145deg,#D8C8F4,#c2acf2); }
+.ob-em { font-size:40px; margin-bottom:10px; }
+.ob-ct { font-family:'Jua',sans-serif; font-size:22px; color:#2a2a2a; }
+.ob-cd { font-size:13px; color:#444; margin-top:5px; line-height:1.6; font-family:'Nunito',sans-serif; }
+.ob-ar { position:absolute; right:24px; top:50%; transform:translateY(-50%); font-size:28px; color:#2a2a2a; }
+
+/* BOTTOM NAV */
+.bnav { height:82px; border-top:1.5px solid var(--bd); display:flex; align-items:flex-start; padding-top:10px; background:rgba(255,255,255,.97); backdrop-filter:blur(24px); flex-shrink:0; z-index:100; }
+.ni { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:4px 0; }
+.ni-ic { font-size:22px; line-height:1; transition:.18s; }
+.ni-lb { font-family:'Nunito',sans-serif; font-size:10px; font-weight:700; color:var(--t3); }
+.ni.act .ni-lb { color:var(--gd); }
+.ni.act .ni-ic { transform:scale(1.12); }
+
+/* MAP HEADER */
+.mhd { background:#fff; padding:12px 20px 14px; display:flex; flex-direction:column; gap:10px; box-shadow:0 1px 0 var(--bd); flex-shrink:0; }
+.mhd-top { display:flex; align-items:center; }
+.loc-btn { display:flex; align-items:center; gap:4px; margin-left:auto; background:var(--bg); border-radius:22px; padding:8px 13px; font-size:12px; font-weight:700; color:var(--t2); font-family:'Nunito',sans-serif; border:1.5px solid var(--bd); cursor:pointer; }
+.sbar { background:var(--bg); border-radius:18px; padding:11px 16px; display:flex; align-items:center; gap:9px; border:1.5px solid var(--bd); }
+.sbar input { border:none; background:transparent; flex:1; font-size:14px; color:var(--tx); outline:none; font-family:'Nunito',sans-serif; }
+
+/* ★ 카테고리: 전체/창작자/소상공인 (클릭시 분류) */
+.chips { display:flex; gap:8px; }
+.chip { flex:1; text-align:center; padding:10px 8px; border-radius:16px; font-size:12.5px; font-weight:800; border:1.5px solid var(--bd); background:#fff; color:var(--t2); cursor:pointer; font-family:'Nunito',sans-serif; transition:.15s; }
+.chip.ag { background:var(--tx); border-color:var(--tx); color:#fff; }
+.chip.ag.cr-on { background:var(--g); border-color:var(--gd); color:var(--gt); }
+.chip.ag.ow-on { background:var(--p); border-color:var(--pd); color:var(--pt); }
+
+/* REALISTIC MAP (더 지도스럽게) */
+.mmap { flex:1; position:relative; overflow:hidden; background:#E3EDDD; }
+.map-svg-base { position:absolute; inset:0; width:100%; height:100%; }
+.mpin { position:absolute; transform:translate(-50%,-100%); cursor:pointer; z-index:20; display:flex; flex-direction:column; align-items:center; transition:.2s; }
+.mpin.hidden { display:none; }
+.pbub { background:#fff; border-radius:16px; padding:7px 12px; font-size:11px; font-weight:800; font-family:'Nunito',sans-serif; box-shadow:0 4px 14px rgba(0,0,0,.2); display:flex; align-items:center; gap:4px; white-space:nowrap; border:2px solid transparent; }
+.pbub.cr { border-color:var(--gd); }
+.pbub.ow { border-color:var(--pd); }
+.ptail { width:0; height:0; border-left:6px solid transparent; border-right:6px solid transparent; border-top:8px solid #fff; margin-top:-1px; filter:drop-shadow(0 2px 2px rgba(0,0,0,.12)); }
+.mypin { position:absolute; left:50%; top:48%; transform:translate(-50%,-50%); z-index:30; }
+.mydot { width:20px; height:20px; background:#4A8AFF; border-radius:50%; border:3px solid #fff; box-shadow:0 0 0 5px rgba(74,138,255,.25),0 4px 12px rgba(74,138,255,.45); }
+.my-pulse { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:40px; height:40px; border-radius:50%; background:rgba(74,138,255,.18); animation:pulse 2s infinite; }
+@keyframes pulse { 0%{transform:translate(-50%,-50%) scale(.8);opacity:.8} 100%{transform:translate(-50%,-50%) scale(1.7);opacity:0} }
+.mctrl { position:absolute; right:14px; top:14px; display:flex; flex-direction:column; gap:1px; z-index:30; border-radius:12px; overflow:hidden; box-shadow:0 3px 14px rgba(0,0,0,.15); }
+.mctrl-btn { width:40px; height:38px; background:#fff; display:flex; align-items:center; justify-content:center; font-size:17px; font-weight:800; color:var(--t2); border:none; cursor:pointer; font-family:'Nunito',sans-serif; border-bottom:1px solid var(--bd); }
+.mctrl-btn:last-child { border-bottom:none; }
+.map-scale { position:absolute; left:14px; bottom:14px; z-index:20; }
+.scale-bar { display:flex; align-items:center; gap:6px; }
+.scale-line { width:50px; height:3px; background:#555; border-radius:2px; }
+.scale-txt { font-size:10px; font-weight:700; color:#444; font-family:'Nunito',sans-serif; background:rgba(255,255,255,.85); padding:2px 6px; border-radius:5px; }
+.map-compass { position:absolute; right:14px; bottom:14px; z-index:20; width:34px; height:34px; background:rgba(255,255,255,.92); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; box-shadow:0 2px 10px rgba(0,0,0,.12); }
+
+/* BOTTOM SHEET */
+.bsmini { background:#fff; border-radius:26px 26px 0 0; padding:12px 20px 0; box-shadow:0 -4px 24px rgba(0,0,0,.08); flex-shrink:0; }
+.bsh { width:38px; height:4.5px; background:var(--bd); border-radius:5px; margin:0 auto 14px; }
+.bsmini-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:13px; }
+.bsmt { font-family:'Jua',sans-serif; font-size:16px; color:var(--tx); }
+.bsm-link { font-size:12px; font-weight:800; color:var(--gd); cursor:pointer; font-family:'Nunito',sans-serif; }
+.cscroll { display:flex; gap:12px; overflow-x:auto; padding-bottom:16px; }
+.cscroll::-webkit-scrollbar { display:none; }
+.pcard { flex-shrink:0; width:160px; background:#fff; border-radius:22px; overflow:hidden; border:1.5px solid var(--bd); cursor:pointer; transition:.15s; position:relative; }
+.pcard:active { transform:scale(.97); }
+.pcard.hidden { display:none; }
+.pcard-img { height:88px; display:flex; align-items:center; justify-content:center; font-size:38px; position:relative; }
+.pcard-img.g { background:linear-gradient(135deg,#C5E7A5,#a5d97f); }
+.pcard-img.p { background:linear-gradient(135deg,#D8C8F4,#c0a4f0); }
+.pcb { padding:10px 12px 13px; }
+.pctag { display:inline-block; font-size:10px; font-weight:800; padding:3px 9px; border-radius:12px; margin-bottom:5px; font-family:'Nunito',sans-serif; }
+.pctag.cr { background:var(--g); color:var(--gt); }
+.pctag.ow { background:var(--p); color:var(--pt); }
+.pcn { font-family:'Jua',sans-serif; font-size:13px; color:var(--tx); }
+.pcd { font-size:11px; color:var(--t3); margin-top:2px; font-family:'Nunito',sans-serif; }
+.pcr { display:flex; align-items:center; gap:4px; margin-top:7px; }
+.rtext { font-size:11px; font-weight:700; color:var(--t2); font-family:'Nunito',sans-serif; }
+
+/* ── HEART (찜하기) ── */
+.heart-btn { position:absolute; top:8px; right:8px; width:30px; height:30px; background:rgba(255,255,255,.85); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; cursor:pointer; z-index:5; transition:.15s; }
+.heart-btn:active { transform:scale(.85); }
+.heart-btn.liked { background:#fff; }
+.heart-detail { width:40px; height:40px; background:rgba(255,255,255,.9); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:19px; cursor:pointer; transition:.15s; box-shadow:0 2px 10px rgba(0,0,0,.1); }
+.heart-detail:active { transform:scale(.85); }
+
+/* EXPLORE */
+.exhd { background:#fff; padding:12px 20px 14px; border-bottom:1.5px solid var(--bd); flex-shrink:0; }
+.exlist { flex:1; overflow-y:auto; padding:14px 20px; display:flex; flex-direction:column; gap:11px; }
+.exi { background:#fff; border-radius:22px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.06); transition:.15s; border:1.5px solid var(--bd); position:relative; }
+.exi.hidden { display:none; }
+.exi:active { transform:scale(.99); }
+.exi-top { display:flex; align-items:center; gap:13px; padding:15px 16px; }
+.exi-av { width:54px; height:54px; border-radius:19px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0; }
+.exi-av.g { background:linear-gradient(135deg,#C5E7A5,#a5d97f); }
+.exi-av.p { background:linear-gradient(135deg,#D8C8F4,#c0a4f0); }
+.exi-name { font-family:'Jua',sans-serif; font-size:14px; color:var(--tx); }
+.exi-sub { font-size:12px; color:var(--t3); margin-top:3px; font-family:'Nunito',sans-serif; }
+.exi-meta { display:flex; align-items:center; gap:6px; margin-top:6px; }
+.exi-tag { font-size:10px; font-weight:800; padding:3px 9px; border-radius:11px; font-family:'Nunito',sans-serif; }
+.exi-tag.cr { background:var(--g); color:var(--gt); }
+.exi-tag.ow { background:var(--p); color:var(--pt); }
+.exi-tags { display:flex; flex-wrap:wrap; gap:6px; padding:0 16px 13px; }
+.etag { font-size:11px; padding:4px 10px; border-radius:11px; background:var(--bg); color:var(--t2); font-family:'Nunito',sans-serif; font-weight:700; white-space:nowrap; border:1px solid var(--bd); }
+.arr { font-size:20px; color:var(--t3); }
+
+.kolabi-badge { display:inline-flex; align-items:center; gap:4px; background:var(--g); border-radius:10px; padding:3px 10px; font-size:12px; font-weight:800; color:var(--gt); font-family:'Nunito',sans-serif; border:1.5px solid var(--gd); }
+.kolabi-badge.lv3 { background:#d4f0d4; border-color:#5a9c5a; color:#2a5a2a; }
+.kolabi-badge.lv4 { background:#b8e8b8; border-color:#3a7a3a; color:#1a4a1a; }
+
+/* DETAIL */
+.dhd { background:#fff; padding:12px 20px; display:flex; align-items:center; gap:12px; border-bottom:1.5px solid var(--bd); flex-shrink:0; }
+.bk { font-size:26px; cursor:pointer; color:var(--tx); line-height:1; }
+.dht { font-family:'Jua',sans-serif; font-size:18px; color:var(--tx); }
+.dcontent { flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:14px; }
+.dhero { border-radius:28px; height:160px; display:flex; align-items:center; justify-content:center; font-size:72px; position:relative; }
+.dhero.g { background:linear-gradient(135deg,#C5E7A5,#a5d97f); }
+.dhero.p { background:linear-gradient(135deg,#D8C8F4,#c0a4f0); }
+.dhero .heart-detail { position:absolute; top:14px; right:14px; }
+.card { background:#fff; border-radius:24px; padding:20px; border:1.5px solid var(--bd); }
+.sec-t { font-family:'Jua',sans-serif; font-size:16px; color:var(--tx); margin-bottom:14px; }
+
+.collab-want-box { background:linear-gradient(135deg,#f0fbea,#f5f0ff); border-radius:18px; padding:16px; border:1.5px solid #d4edc4; }
+.collab-want-label { font-family:'Jua',sans-serif; font-size:14px; color:var(--gt); margin-bottom:10px; display:flex; align-items:center; gap:6px; }
+.collab-want-text { font-size:13px; color:var(--t2); line-height:1.8; font-family:'Nunito',sans-serif; }
+
+.srow { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--bd); }
+.srow:last-child { border-bottom:none; }
+.srow-lb { font-size:13px; color:var(--t2); font-family:'Nunito',sans-serif; }
+.srow-v { font-family:'Nunito',sans-serif; font-size:13px; font-weight:900; color:var(--tx); }
+.tag-row { display:flex; flex-wrap:wrap; gap:6px; margin-top:12px; }
+.ftag { padding:7px 14px; border-radius:14px; font-size:12px; font-weight:700; background:var(--bg); color:var(--t2); border:1.5px solid var(--bd); font-family:'Nunito',sans-serif; }
+.sbadge { padding:6px 12px; border-radius:14px; font-size:11px; font-weight:800; font-family:'Nunito',sans-serif; }
+.sbadge.og { background:var(--p); color:var(--pt); }
+.sbadge.dn { background:var(--g); color:var(--gt); }
+.sbadge.wt { background:#FFF3CD; color:#856404; }
+.dfoot { background:#fff; padding:14px 20px 18px; display:flex; gap:10px; border-top:1.5px solid var(--bd); flex-shrink:0; }
+.btn-s { padding:14px 18px; border-radius:18px; background:var(--bg); border:1.5px solid var(--bd); font-family:'Jua',sans-serif; font-size:14px; color:var(--t2); cursor:pointer; }
+.btn-p { flex:1; padding:14px; border-radius:18px; background:linear-gradient(135deg,#7CB858,#9575CD); border:none; color:#fff; font-family:'Jua',sans-serif; font-size:16px; cursor:pointer; box-shadow:0 6px 20px rgba(149,117,205,.35); transition:.15s; }
+.btn-p:active { transform:scale(.98); }
+
+/* PROJECT CREATE */
+.pcreate { flex:1; overflow-y:auto; padding:18px 20px; display:flex; flex-direction:column; gap:14px; }
+.field-lb { font-family:'Nunito',sans-serif; font-size:12px; font-weight:800; color:var(--t3); margin-bottom:7px; }
+.field-input { background:var(--bg); border-radius:16px; padding:14px 16px; font-size:14px; color:var(--tx); border:1.5px solid var(--bd); line-height:1.6; font-family:'Nunito',sans-serif; width:100%; outline:none; }
+.field-textarea { background:var(--bg); border-radius:16px; padding:14px 16px; font-size:14px; color:var(--tx); border:1.5px solid var(--bd); line-height:1.6; font-family:'Nunito',sans-serif; width:100%; outline:none; resize:none; min-height:90px; }
+.revenue-simple { background:linear-gradient(135deg,#f0fbea,#f5f0ff); border-radius:18px; padding:18px; border:1.5px solid #d4edc4; }
+.revenue-hope-row { display:flex; align-items:center; gap:10px; margin-top:12px; }
+.revenue-hope-label { font-size:13px; font-weight:700; color:var(--t2); font-family:'Nunito',sans-serif; white-space:nowrap; }
+.revenue-slider { flex:1; height:6px; border-radius:3px; background:linear-gradient(90deg,var(--gd),var(--pd)); appearance:none; outline:none; cursor:pointer; }
+.revenue-slider::-webkit-slider-thumb { appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:3px solid var(--gd); box-shadow:0 2px 8px rgba(0,0,0,.15); cursor:pointer; }
+.revenue-value { font-family:'Jua',sans-serif; font-size:18px; color:var(--tx); min-width:48px; text-align:center; }
+.revenue-notice { margin-top:14px; padding:12px 14px; background:rgba(255,255,255,.8); border-radius:14px; font-size:12px; color:var(--t2); line-height:1.7; font-family:'Nunito',sans-serif; border:1px solid #d4edc4; }
+.upload-zone { border:2px dashed var(--gd); border-radius:18px; padding:22px; display:flex; flex-direction:column; align-items:center; gap:8px; background:linear-gradient(135deg,#f5fbf0,#f8f4ff); cursor:pointer; transition:.15s; }
+.upload-zone:active { transform:scale(.98); }
+.upload-icon { font-size:32px; }
+.upload-title { font-family:'Jua',sans-serif; font-size:14px; color:var(--gt); }
+.upload-sub { font-size:11px; color:var(--t3); font-family:'Nunito',sans-serif; }
+.upload-types { display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; justify-content:center; }
+.upload-type { font-size:10px; font-weight:700; padding:3px 9px; border-radius:8px; background:#fff; border:1px solid var(--bd); color:var(--t2); font-family:'Nunito',sans-serif; }
+.uploaded-files { display:flex; flex-direction:column; gap:8px; margin-top:4px; }
+.file-item { display:flex; align-items:center; gap:10px; background:#fff; border-radius:13px; padding:11px 14px; border:1.5px solid var(--bd); }
+.file-icon { font-size:22px; }
+.file-info { flex:1; }
+.file-name { font-size:13px; font-weight:700; color:var(--tx); font-family:'Nunito',sans-serif; }
+.file-size { font-size:11px; color:var(--t3); font-family:'Nunito',sans-serif; margin-top:1px; }
+.file-del { font-size:18px; cursor:pointer; color:var(--t3); padding:4px; }
+
+/* PROJECTS */
+.prjhd { background:#fff; padding:12px 20px 16px; border-bottom:1.5px solid var(--bd); flex-shrink:0; }
+.prjtabs { display:flex; background:var(--bg); border-radius:16px; padding:4px; margin-top:12px; }
+.prjt { flex:1; text-align:center; padding:10px; border-radius:12px; font-family:'Jua',sans-serif; font-size:13px; color:var(--t3); cursor:pointer; }
+.prjt.act { background:#fff; color:var(--tx); box-shadow:0 3px 10px rgba(0,0,0,.09); }
+.prjlist { flex:1; overflow-y:auto; padding:15px 20px; display:flex; flex-direction:column; gap:14px; }
+.prjcard { background:#fff; border-radius:24px; overflow:hidden; border:1.5px solid var(--bd); }
+.prjc-hd { padding:16px 20px; display:flex; align-items:center; gap:13px; border-bottom:1px solid var(--bd); }
+.prjc-em { font-size:32px; }
+.prjc-name { font-family:'Jua',sans-serif; font-size:15px; color:var(--tx); }
+.prjc-par { font-size:12px; color:var(--t3); margin-top:2px; font-family:'Nunito',sans-serif; }
+.prjc-bd { padding:16px 20px; }
+.pbar-wrap { margin-top:6px; }
+.pbar-row { display:flex; justify-content:space-between; margin-bottom:7px; }
+.pbar-row span { font-family:'Nunito',sans-serif; font-size:12px; color:var(--t3); font-weight:700; }
+.pbar-row span:last-child { font-weight:900; color:var(--tx); }
+.pbar-bg { height:9px; background:var(--bg); border-radius:5px; overflow:hidden; }
+.pbar-fill { height:100%; background:linear-gradient(90deg,#7CB858,#9575CD); border-radius:5px; }
+.rev-row { display:flex; gap:10px; margin-top:13px; }
+.rev-i { flex:1; background:var(--bg); border-radius:16px; padding:13px; }
+.rev-lb { font-family:'Nunito',sans-serif; font-size:11px; color:var(--t3); font-weight:700; }
+.rev-v { font-family:'Jua',sans-serif; font-size:15px; color:var(--tx); margin-top:3px; }
+.prj-btns { display:flex; gap:8px; margin-top:12px; }
+.prj-btn { flex:1; padding:11px; border-radius:14px; font-family:'Jua',sans-serif; font-size:13px; cursor:pointer; border:none; }
+.prj-btn.s { background:var(--bg); border:1.5px solid var(--bd); color:var(--t2); }
+.prj-btn.p { background:linear-gradient(135deg,#7CB858,#9575CD); color:#fff; }
+.settle-card { background:#fff; border-radius:24px; padding:20px; border:1.5px solid var(--bd); }
+.settle-project-badge { display:inline-flex; align-items:center; gap:6px; background:var(--g); border-radius:12px; padding:5px 12px; font-size:12px; font-weight:800; color:var(--gt); font-family:'Nunito',sans-serif; margin-bottom:14px; border:1px solid var(--gd); }
+
+/* CHAT */
+.chthd { background:#fff; padding:12px 20px 16px; border-bottom:1.5px solid var(--bd); flex-shrink:0; }
+.chtlist { flex:1; overflow-y:auto; padding:14px 20px; display:flex; flex-direction:column; gap:11px; }
+.chti { background:#fff; border-radius:20px; padding:14px 16px; display:flex; align-items:center; gap:13px; cursor:pointer; border:1.5px solid var(--bd); transition:.15s; }
+.chti:active { transform:scale(.99); }
+.chtav { width:50px; height:50px; border-radius:17px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
+.chtav.g { background:var(--g); }
+.chtav.p { background:var(--p); }
+.cht-info { flex:1; min-width:0; }
+.cht-name { font-family:'Jua',sans-serif; font-size:14px; color:var(--tx); }
+.cht-pre { font-size:12px; color:var(--t3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:3px; font-family:'Nunito',sans-serif; }
+.cht-meta { display:flex; flex-direction:column; align-items:flex-end; gap:4px; }
+.cht-time { font-size:11px; color:var(--t3); font-family:'Nunito',sans-serif; }
+.cht-badge { width:20px; height:20px; background:var(--gd); border-radius:10px; color:#fff; font-size:11px; font-weight:900; display:flex; align-items:center; justify-content:center; font-family:'Nunito',sans-serif; }
+.cht-sys { background:linear-gradient(135deg,#C5E7A5,#D8C8F4); border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:13px; }
+
+/* MYPAGE */
+.myhd { background:#fff; padding:0 20px 18px; border-bottom:1.5px solid var(--bd); flex-shrink:0; }
+.mycontent { flex:1; overflow-y:auto; padding:15px 20px; display:flex; flex-direction:column; gap:14px; }
+.profsec { background:linear-gradient(135deg,#C5E7A5 0%,#D8C8F4 100%); border-radius:28px; padding:24px; display:flex; align-items:center; gap:16px; }
+.profav { width:68px; height:68px; border-radius:22px; background:rgba(255,255,255,.8); display:flex; align-items:center; justify-content:center; font-size:34px; box-shadow:0 5px 16px rgba(0,0,0,.1); }
+.prof-name { font-family:'Jua',sans-serif; font-size:22px; color:#2a2a2a; }
+.prof-type { font-size:13px; color:#555; margin-top:2px; font-family:'Nunito',sans-serif; }
+.prof-tags { display:flex; gap:6px; margin-top:9px; }
+.ptag-s { font-size:11px; padding:4px 11px; border-radius:12px; background:rgba(255,255,255,.72); color:var(--gt); font-weight:800; font-family:'Nunito',sans-serif; }
+.kicard { background:#fff; border-radius:26px; padding:22px; border:1.5px solid var(--bd); }
+.ki-hd { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+.ki-badge-box { display:flex; align-items:center; gap:9px; background:var(--g); border-radius:17px; padding:10px 15px; }
+.ki-score { font-family:'Jua',sans-serif; font-size:38px; color:var(--tx); }
+.ki-score span { font-size:16px; color:var(--t3); font-family:'Nunito',sans-serif; }
+.ki-stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px; }
+.ki-s { background:var(--bg); border-radius:16px; padding:13px 15px; }
+.ki-s-lb { font-family:'Nunito',sans-serif; font-size:11px; color:var(--t3); font-weight:700; }
+.ki-s-v { font-family:'Jua',sans-serif; font-size:20px; color:var(--tx); margin-top:2px; }
+.kp { display:flex; align-items:center; justify-content:space-between; position:relative; margin:0 6px; }
+.kstep { display:flex; flex-direction:column; align-items:center; gap:6px; z-index:2; }
+.kic { width:48px; height:48px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:24px; background:var(--bg); border:2px solid var(--bd); }
+.kic.done { background:var(--g); border-color:var(--gd); }
+.kic.cur { background:linear-gradient(135deg,#7CB858,#58913a); border-color:#4d8230; box-shadow:0 6px 18px rgba(124,184,88,.38); }
+.klb { font-family:'Nunito',sans-serif; font-size:10px; font-weight:800; color:var(--t3); }
+.klb.on { color:var(--gt); }
+.klin { position:absolute; top:24px; left:24px; right:24px; height:3px; background:var(--bd); z-index:1; }
+.klf { height:100%; width:48%; background:linear-gradient(90deg,var(--gd),var(--pd)); border-radius:3px; }
+.sgrid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-top:16px; }
+.sitem { background:var(--bg); border-radius:15px; padding:12px; text-align:center; }
+.slb { font-family:'Nunito',sans-serif; font-size:10px; color:var(--t3); font-weight:700; }
+.sv { font-family:'Jua',sans-serif; font-size:18px; color:var(--tx); margin-top:2px; }
+.menusec { background:#fff; border-radius:24px; overflow:hidden; border:1.5px solid var(--bd); }
+.mitem { display:flex; align-items:center; gap:13px; padding:16px 20px; border-bottom:1px solid var(--bd); cursor:pointer; }
+.mitem:last-child { border-bottom:none; }
+.mic { font-size:20px; width:24px; text-align:center; }
+.mlb { font-family:'Nunito',sans-serif; font-size:14px; font-weight:700; color:var(--tx); flex:1; }
+.mar { color:var(--t3); font-size:18px; }
+</style>
+</head>
+<body>
+<div class="device">
+<div class="notch"></div>
+
+<!-- SVG 심볼 정의 (세련된 로고 - 재사용) -->
+<svg width="0" height="0" style="position:absolute">
+<defs>
+  <symbol id="kolabiLogo" viewBox="0 0 48 48">
+    <!-- 미니멀 기하학적 로고: 두 잎이 만나는 형태 = 협업(콜라보) 상징 -->
+    <path d="M24 4C24 4 10 10 10 24C10 31 16 37 24 37C32 37 38 31 38 24C38 10 24 4 24 4Z" fill="url(#lg1)"/>
+    <path d="M24 4C24 4 24 20 24 24C24 30 20 37 24 37" stroke="#1c1c2e" stroke-width="1.2" opacity=".15" fill="none"/>
+    <circle cx="24" cy="24" r="4.5" fill="#1c1c2e"/>
+    <defs>
+      <linearGradient id="lg1" x1="10" y1="4" x2="38" y2="37" gradientUnits="userSpaceOnUse">
+        <stop offset="0%" stop-color="#9BD16E"/>
+        <stop offset="100%" stop-color="#9575CD"/>
+      </linearGradient>
+    </defs>
+  </symbol>
+</defs>
+</svg>
+
+<!-- ===== SPLASH ===== -->
+<div class="screen active" id="splash">
+  <div class="status"><span class="status-time" style="color:#fff;">9:41</span><div class="status-icons" style="color:#fff;"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div style="display:flex;flex-direction:column;align-items:center;flex:1;justify-content:center;">
+    <div class="sp-icon">
+      <svg width="86" height="86" viewBox="0 0 48 48">
+        <use href="#kolabiLogo"/>
+      </svg>
+    </div>
+    <div class="brand-txt-lg">콜라비</div>
+    <div class="sp-tag">COLLABORATION PLATFORM</div>
+    <button class="sp-btn" onclick="go('onboard')">시작하기</button>
+  </div>
+</div>
+
+<!-- ===== ONBOARD ===== -->
+<div class="screen" id="onboard">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="ob-wrap">
+    <div>
+      <div class="ob-h">나는 어떤 역할인가요?</div>
+      <div class="ob-s" style="margin-top:8px;">역할에 맞는 파트너를 찾아드릴게요!</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;">
+      <div class="ob-card cr" onclick="go('mapscreen')">
+        <div class="ob-em">🎨</div><div class="ob-ct">창작자</div>
+        <div class="ob-cd">디자이너, 일러스트레이터, 크리에이터…<br>아이디어를 현실로 만들고 싶어요</div>
+        <div class="ob-ar">→</div>
+      </div>
+      <div class="ob-card ow" onclick="go('mapscreen')">
+        <div class="ob-em">🏪</div><div class="ob-ct">소상공인</div>
+        <div class="ob-cd">카페, 베이커리, 편집숍, 소품샵…<br>창작자와 함께 매장을 빛내고 싶어요</div>
+        <div class="ob-ar">→</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAP ===== -->
+<div class="screen" id="mapscreen">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="mhd">
+    <div class="mhd-top">
+      <div class="logo-svg-wrap">
+        <svg width="28" height="28" viewBox="0 0 48 48"><use href="#kolabiLogo"/></svg>
+        <span class="brand-txt">콜라비</span>
+      </div>
+      <div class="loc-btn">📍 마포구 연남동 ▾</div>
+    </div>
+    <div class="sbar">
+      <span>🔍</span>
+      <input placeholder="창작자 또는 소상공인 검색" readonly>
+      <span style="font-size:20px;cursor:pointer;">🎛</span>
+    </div>
+    <!-- ★ 전체/창작자/소상공인 클릭시 분류 -->
+    <div class="chips">
+      <div class="chip ag" id="mapChipAll" onclick="filterMap('all')">전체</div>
+      <div class="chip" id="mapChipCr" onclick="filterMap('cr')">🎨 창작자</div>
+      <div class="chip" id="mapChipOw" onclick="filterMap('ow')">🏪 소상공인</div>
+    </div>
+  </div>
+
+  <div class="mmap">
+    <svg class="map-svg-base" viewBox="0 0 390 310" preserveAspectRatio="xMidYMid slice">
+      <!-- 배경 -->
+      <rect width="390" height="310" fill="#EAF0E4"/>
+
+      <!-- 블록 그리드 느낌 배경 패턴 -->
+      <defs>
+        <pattern id="blockGrid" width="38" height="38" patternUnits="userSpaceOnUse">
+          <rect width="38" height="38" fill="#EAF0E4"/>
+          <rect x="1" y="1" width="36" height="36" fill="#E4EBDD"/>
+        </pattern>
+      </defs>
+      <rect width="390" height="310" fill="url(#blockGrid)"/>
+
+      <!-- 공원/녹지 -->
+      <rect x="0" y="0" width="85" height="70" fill="#CFE6C3"/>
+      <rect x="280" y="0" width="110" height="55" fill="#CFE6C3"/>
+      <rect x="150" y="222" width="100" height="88" fill="#CFE6C3"/>
+      <rect x="0" y="232" width="70" height="78" fill="#D3EAC8"/>
+      <circle cx="22" cy="22" r="7" fill="#A8D494" opacity=".8"/>
+      <circle cx="45" cy="18" r="5.5" fill="#A8D494" opacity=".8"/>
+      <circle cx="65" cy="28" r="8" fill="#A8D494" opacity=".8"/>
+      <circle cx="30" cy="50" r="6.5" fill="#A8D494" opacity=".8"/>
+      <circle cx="295" cy="18" r="7" fill="#A8D494" opacity=".8"/>
+      <circle cx="320" cy="12" r="6" fill="#A8D494" opacity=".8"/>
+      <circle cx="350" cy="22" r="8" fill="#A8D494" opacity=".8"/>
+      <circle cx="370" cy="10" r="5.5" fill="#A8D494" opacity=".8"/>
+
+      <!-- 하천 -->
+      <path d="M 0 185 Q 50 178 100 183 Q 150 188 200 182 Q 250 176 300 180 Q 340 184 390 178 L390 198 Q340 204 300 200 Q250 196 200 202 Q150 208 100 203 Q50 198 0 204Z" fill="#B8DCEE" opacity=".9"/>
+      <text x="160" y="196" font-size="9" fill="#6FA8C4" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">홍제천</text>
+
+      <!-- 건물 블록 (더 촘촘하고 다양한 크기) -->
+      <g fill="#D2DCC8" stroke="#C0CDB4" stroke-width="0.6">
+        <rect x="78" y="62" width="26" height="20" rx="2"/>
+        <rect x="130" y="64" width="50" height="22" rx="2"/>
+        <rect x="200" y="60" width="40" height="24" rx="2"/>
+        <rect x="272" y="10" width="42" height="38" rx="2"/>
+        <rect x="272" y="60" width="42" height="24" rx="2"/>
+        <rect x="334" y="60" width="50" height="24" rx="2"/>
+        <rect x="334" y="10" width="50" height="38" rx="2"/>
+        <rect x="2" y="112" width="52" height="34" rx="2"/>
+        <rect x="72" y="112" width="30" height="34" rx="2"/>
+        <rect x="130" y="112" width="50" height="34" rx="2"/>
+        <rect x="200" y="112" width="40" height="34" rx="2"/>
+        <rect x="272" y="112" width="42" height="34" rx="2"/>
+        <rect x="334" y="112" width="50" height="34" rx="2"/>
+        <rect x="2" y="162" width="52" height="30" rx="2"/>
+        <rect x="72" y="162" width="30" height="30" rx="2"/>
+        <rect x="130" y="162" width="50" height="16" rx="2"/>
+        <rect x="200" y="162" width="40" height="30" rx="2"/>
+        <rect x="272" y="162" width="42" height="30" rx="2"/>
+        <rect x="334" y="162" width="50" height="30" rx="2"/>
+        <rect x="2" y="226" width="52" height="42" rx="2"/>
+        <rect x="72" y="226" width="30" height="42" rx="2"/>
+        <rect x="272" y="226" width="42" height="42" rx="2"/>
+        <rect x="334" y="226" width="50" height="42" rx="2"/>
+      </g>
+
+      <!-- 주요 도로 -->
+      <rect x="0" y="88" width="390" height="20" fill="#FDFDFB"/>
+      <rect x="0" y="200" width="390" height="20" fill="#FDFDFB"/>
+      <rect x="108" y="0" width="20" height="310" fill="#FDFDFB"/>
+      <rect x="248" y="0" width="20" height="310" fill="#FDFDFB"/>
+      <!-- 도로 테두리 -->
+      <g stroke="#CBD4C1" stroke-width="1" fill="none">
+        <line x1="0" y1="88" x2="390" y2="88"/><line x1="0" y1="108" x2="390" y2="108"/>
+        <line x1="0" y1="200" x2="390" y2="200"/><line x1="0" y1="220" x2="390" y2="220"/>
+        <line x1="108" y1="0" x2="108" y2="310"/><line x1="128" y1="0" x2="128" y2="310"/>
+        <line x1="248" y1="0" x2="248" y2="310"/><line x1="268" y1="0" x2="268" y2="310"/>
+      </g>
+      <!-- 중앙선 -->
+      <g stroke="#F0C419" stroke-width="1.2" stroke-dasharray="12,8" opacity=".7">
+        <line x1="0" y1="98" x2="390" y2="98"/>
+        <line x1="0" y1="210" x2="390" y2="210"/>
+        <line x1="118" y1="0" x2="118" y2="310"/>
+        <line x1="258" y1="0" x2="258" y2="310"/>
+      </g>
+
+      <!-- 보조 도로 -->
+      <rect x="0" y="50" width="390" height="9" fill="rgba(255,255,255,.8)"/>
+      <rect x="0" y="148" width="390" height="9" fill="rgba(255,255,255,.8)"/>
+      <rect x="60" y="0" width="9" height="310" fill="rgba(255,255,255,.8)"/>
+      <rect x="188" y="0" width="9" height="310" fill="rgba(255,255,255,.8)"/>
+      <rect x="320" y="0" width="9" height="310" fill="rgba(255,255,255,.8)"/>
+      <g stroke="#DCE3D3" stroke-width=".7" fill="none">
+        <line x1="0" y1="50" x2="390" y2="50"/><line x1="0" y1="59" x2="390" y2="59"/>
+        <line x1="0" y1="148" x2="390" y2="148"/><line x1="0" y1="157" x2="390" y2="157"/>
+        <line x1="60" y1="0" x2="60" y2="310"/><line x1="69" y1="0" x2="69" y2="310"/>
+        <line x1="188" y1="0" x2="188" y2="310"/><line x1="197" y1="0" x2="197" y2="310"/>
+        <line x1="320" y1="0" x2="320" y2="310"/><line x1="329" y1="0" x2="329" y2="310"/>
+      </g>
+
+      <!-- 도로명 -->
+      <text x="194" y="101" font-size="8.5" fill="#8A9A80" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">연남로</text>
+      <text x="194" y="213" font-size="8.5" fill="#8A9A80" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">동교로</text>
+      <text x="118" y="75" font-size="8" fill="#8A9A80" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle" transform="rotate(-90,118,75)">경의로</text>
+      <text x="258" y="75" font-size="8" fill="#8A9A80" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle" transform="rotate(-90,258,75)">홍익로</text>
+      <text x="40" y="42" font-size="9" fill="#5C8A4C" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">연남공원</text>
+      <text x="335" y="35" font-size="9" fill="#5C8A4C" font-weight="700" font-family="Nunito,sans-serif" text-anchor="middle">홍제공원</text>
+
+      <!-- 지하철역 -->
+      <circle cx="118" cy="98" r="7" fill="#fff" stroke="#3F51B5" stroke-width="2"/>
+      <text x="118" y="101.5" font-size="8" fill="#3F51B5" font-weight="900" font-family="sans-serif" text-anchor="middle">M</text>
+      <circle cx="258" cy="98" r="7" fill="#fff" stroke="#3F51B5" stroke-width="2"/>
+      <text x="258" y="101.5" font-size="8" fill="#3F51B5" font-weight="900" font-family="sans-serif" text-anchor="middle">M</text>
+
+      <!-- 건물 음영(입체감) -->
+      <g opacity=".08">
+        <rect x="78" y="80" width="26" height="4" fill="#000"/>
+        <rect x="130" y="84" width="50" height="4" fill="#000"/>
+        <rect x="272" y="44" width="42" height="4" fill="#000"/>
+      </g>
+    </svg>
+
+    <div class="mpin cr-pin" style="left:28%;top:42%" onclick="go('detail')">
+      <div class="pbub cr">🎨 채림</div><div class="ptail"></div>
+    </div>
+    <div class="mpin cr-pin" style="left:74%;top:20%">
+      <div class="pbub cr">✏️ 다온</div><div class="ptail"></div>
+    </div>
+    <div class="mpin cr-pin" style="left:58%;top:56%">
+      <div class="pbub cr">📸 민준</div><div class="ptail"></div>
+    </div>
+    <div class="mpin ow-pin" style="left:44%;top:30%">
+      <div class="pbub ow">☕ 브레드카페</div><div class="ptail"></div>
+    </div>
+    <div class="mpin ow-pin" style="left:16%;top:62%">
+      <div class="pbub ow">🛍 소품달</div><div class="ptail"></div>
+    </div>
+    <div class="mpin ow-pin" style="left:82%;top:50%">
+      <div class="pbub ow">🌸 플라워샵</div><div class="ptail"></div>
+    </div>
+
+    <div class="mypin"><div class="my-pulse"></div><div class="mydot"></div></div>
+    <div class="mctrl">
+      <button class="mctrl-btn">+</button>
+      <button class="mctrl-btn">−</button>
+    </div>
+    <div class="map-compass">🧭</div>
+    <div class="map-scale">
+      <div class="scale-bar"><div class="scale-line"></div><div class="scale-txt">200m</div></div>
+    </div>
+  </div>
+
+  <div class="bsmini">
+    <div class="bsh"></div>
+    <div class="bsmini-top">
+      <div class="bsmt" id="bsTitle">근처 파트너 6명</div>
+      <div class="bsm-link" onclick="go('explore')">목록 보기 →</div>
+    </div>
+    <div class="cscroll" id="bsCardList">
+      <div class="pcard cr-card" onclick="go('detail')">
+        <div class="pcard-img g">🎨<div class="heart-btn" onclick="toggleHeart(event,this)">🤍</div></div>
+        <div class="pcb">
+          <div class="pctag cr">창작자</div>
+          <div class="pcn">채림 스튜디오</div>
+          <div class="pcd">일러스트 · 굿즈 기획</div>
+          <div class="pcr"><span style="font-size:14px;">🌿</span><span class="rtext">새싹 · 완료 3건</span></div>
+        </div>
+      </div>
+      <div class="pcard ow-card">
+        <div class="pcard-img p">☕<div class="heart-btn" onclick="toggleHeart(event,this)">🤍</div></div>
+        <div class="pcb">
+          <div class="pctag ow">소상공인</div>
+          <div class="pcn">브레드카페</div>
+          <div class="pcd">팝업 · 굿즈 협업</div>
+          <div class="pcr"><span style="font-size:14px;">🥬</span><span class="rtext">콜라비 · 완료 8건</span></div>
+        </div>
+      </div>
+      <div class="pcard cr-card">
+        <div class="pcard-img g">📸<div class="heart-btn" onclick="toggleHeart(event,this)">🤍</div></div>
+        <div class="pcb">
+          <div class="pctag cr">창작자</div>
+          <div class="pcn">민준 포토</div>
+          <div class="pcd">상품 촬영 · SNS</div>
+          <div class="pcr"><span style="font-size:14px;">🌱</span><span class="rtext">성장 · 완료 5건</span></div>
+        </div>
+      </div>
+      <div class="pcard ow-card">
+        <div class="pcard-img p">🛍<div class="heart-btn" onclick="toggleHeart(event,this)">🤍</div></div>
+        <div class="pcb">
+          <div class="pctag ow">소상공인</div>
+          <div class="pcn">소품달</div>
+          <div class="pcd">위탁판매 · 공간협업</div>
+          <div class="pcr"><span style="font-size:14px;">🌱</span><span class="rtext">성장 · 완료 4건</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <div class="ni act" onclick="nav(this,'mapscreen')"><div class="ni-ic">🗺</div><div class="ni-lb">홈</div></div>
+    <div class="ni" onclick="nav(this,'explore')"><div class="ni-ic">🔍</div><div class="ni-lb">탐색</div></div>
+    <div class="ni" onclick="nav(this,'projects')"><div class="ni-ic">📋</div><div class="ni-lb">프로젝트</div></div>
+    <div class="ni" onclick="nav(this,'chats')"><div class="ni-ic">💬</div><div class="ni-lb">채팅</div></div>
+    <div class="ni" onclick="nav(this,'mypage')"><div class="ni-ic">👤</div><div class="ni-lb">마이</div></div>
+  </div>
+</div>
+
+<!-- ===== EXPLORE ===== -->
+<div class="screen" id="explore">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="exhd">
+    <div class="logo-svg-wrap" style="margin-bottom:12px;">
+      <svg width="26" height="26" viewBox="0 0 48 48"><use href="#kolabiLogo"/></svg>
+      <span class="brand-txt">탐색</span>
+    </div>
+    <div class="sbar" style="margin-bottom:10px;">
+      <span>🔍</span>
+      <input placeholder="관심 분야나 지역으로 검색" readonly>
+      <span style="font-size:18px;cursor:pointer;" onclick="toggleFilter()">🎛</span>
+    </div>
+    <div class="chips">
+      <div class="chip ag" id="exChipAll" onclick="filterExplore('all')">전체</div>
+      <div class="chip" id="exChipCr" onclick="filterExplore('cr')">🎨 창작자</div>
+      <div class="chip" id="exChipOw" onclick="filterExplore('ow')">🏪 소상공인</div>
+    </div>
+
+    <div class="filter-panel" id="filterPanel" style="display:none;flex-direction:column;gap:12px;background:#fff;border-radius:20px;border:1.5px solid var(--bd);padding:16px;margin-top:10px;box-shadow:0 4px 20px rgba(0,0,0,.08);">
+      <div>
+        <div style="font-family:'Jua',sans-serif;font-size:14px;color:var(--tx);margin-bottom:4px;">🎯 콜라보 유형</div>
+        <div style="display:flex;flex-wrap:wrap;gap:7px;">
+          <div class="fchip on" onclick="toggleFchip(this)" style="padding:7px 14px;border-radius:16px;font-size:12px;font-weight:700;border:1.5px solid var(--bd);background:var(--g);border-color:var(--gd);color:var(--gt);cursor:pointer;font-family:'Nunito',sans-serif;">🎪 팝업스토어</div>
+          <div class="fchip" onclick="toggleFchip(this)" style="padding:7px 14px;border-radius:16px;font-size:12px;font-weight:700;border:1.5px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-family:'Nunito',sans-serif;">🎁 굿즈 제작</div>
+          <div class="fchip" onclick="toggleFchip(this)" style="padding:7px 14px;border-radius:16px;font-size:12px;font-weight:700;border:1.5px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-family:'Nunito',sans-serif;">🛒 위탁판매</div>
+          <div class="fchip" onclick="toggleFchip(this)" style="padding:7px 14px;border-radius:16px;font-size:12px;font-weight:700;border:1.5px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-family:'Nunito',sans-serif;">📸 콘텐츠·촬영</div>
+        </div>
+      </div>
+      <button onclick="toggleFilter()" style="width:100%;padding:13px;border-radius:16px;background:linear-gradient(135deg,#7CB858,#9575CD);border:none;color:#fff;font-family:'Jua',sans-serif;font-size:14px;cursor:pointer;margin-top:4px;">✅ 필터 적용하기</button>
+    </div>
+  </div>
+
+  <div class="exlist">
+    <div style="font-size:13px;font-weight:800;color:var(--t3);font-family:'Nunito',sans-serif;" id="exCount">총 24명의 파트너</div>
+
+    <div class="exi cr-item" onclick="go('detail')">
+      <div class="heart-btn" onclick="toggleHeart(event,this)" style="top:12px;">🤍</div>
+      <div class="exi-top">
+        <div class="exi-av g">🎨</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="exi-name">채림 스튜디오</span>
+            <span class="exi-tag cr">창작자</span>
+            <span class="kolabi-badge">🌿 새싹</span>
+          </div>
+          <div class="exi-sub">일러스트 · 굿즈 기획 · 팝업 운영</div>
+          <div class="exi-meta"><span style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;">완료 3건 · 마포구</span></div>
+        </div>
+        <div class="arr">›</div>
+      </div>
+      <div class="exi-tags">
+        <span class="etag">#굿즈제작</span><span class="etag">#팝업스토어</span><span class="etag">#일러스트</span><span class="etag">#브랜딩</span><span class="etag">#엽서</span>
+      </div>
+    </div>
+
+    <div class="exi ow-item">
+      <div class="heart-btn" onclick="toggleHeart(event,this)" style="top:12px;">🤍</div>
+      <div class="exi-top">
+        <div class="exi-av p">☕</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="exi-name">브레드카페</span>
+            <span class="exi-tag ow">소상공인</span>
+            <span class="kolabi-badge lv4">🥬 콜라비</span>
+          </div>
+          <div class="exi-sub">카페 · 팝업 공간 제공 · 굿즈 협업</div>
+          <div class="exi-meta"><span style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;">완료 8건 · 마포구</span></div>
+        </div>
+        <div class="arr">›</div>
+      </div>
+      <div class="exi-tags">
+        <span class="etag">#공간제공</span><span class="etag">#팝업</span><span class="etag">#카페협업</span><span class="etag">#굿즈판매</span>
+      </div>
+    </div>
+
+    <div class="exi cr-item">
+      <div class="heart-btn" onclick="toggleHeart(event,this)" style="top:12px;">🤍</div>
+      <div class="exi-top">
+        <div class="exi-av g">📸</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="exi-name">민준 포토</span>
+            <span class="exi-tag cr">창작자</span>
+            <span class="kolabi-badge lv3">🌱 성장</span>
+          </div>
+          <div class="exi-sub">상품 촬영 · SNS 콘텐츠 · 룩북</div>
+          <div class="exi-meta"><span style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;">완료 5건 · 서대문구</span></div>
+        </div>
+        <div class="arr">›</div>
+      </div>
+      <div class="exi-tags">
+        <span class="etag">#사진촬영</span><span class="etag">#SNS콘텐츠</span><span class="etag">#룩북</span><span class="etag">#상품사진</span>
+      </div>
+    </div>
+
+    <div class="exi ow-item">
+      <div class="heart-btn" onclick="toggleHeart(event,this)" style="top:12px;">🤍</div>
+      <div class="exi-top">
+        <div class="exi-av p">🛍</div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+            <span class="exi-name">소품달</span>
+            <span class="exi-tag ow">소상공인</span>
+            <span class="kolabi-badge lv3">🌱 성장</span>
+          </div>
+          <div class="exi-sub">소품샵 · 위탁판매 · 공간 협업</div>
+          <div class="exi-meta"><span style="font-size:11px;color:var(--t3);font-family:'Nunito',sans-serif;">완료 4건 · 용산구</span></div>
+        </div>
+        <div class="arr">›</div>
+      </div>
+      <div class="exi-tags">
+        <span class="etag">#위탁판매</span><span class="etag">#소품</span><span class="etag">#입점협업</span><span class="etag">#편집숍</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="bnav">
+    <div class="ni" onclick="nav(this,'mapscreen')"><div class="ni-ic">🗺</div><div class="ni-lb">홈</div></div>
+    <div class="ni act" onclick="nav(this,'explore')"><div class="ni-ic">🔍</div><div class="ni-lb">탐색</div></div>
+    <div class="ni" onclick="nav(this,'projects')"><div class="ni-ic">📋</div><div class="ni-lb">프로젝트</div></div>
+    <div class="ni" onclick="nav(this,'chats')"><div class="ni-ic">💬</div><div class="ni-lb">채팅</div></div>
+    <div class="ni" onclick="nav(this,'mypage')"><div class="ni-ic">👤</div><div class="ni-lb">마이</div></div>
+  </div>
+</div>
+
+<!-- ===== DETAIL ===== -->
+<div class="screen" id="detail">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="dhd">
+    <span class="bk" onclick="go('mapscreen')">‹</span>
+    <span class="dht">파트너 프로필</span>
+  </div>
+  <div class="dcontent">
+    <div class="dhero g">
+      🎨
+      <div class="heart-detail" onclick="toggleHeart(event,this)">🤍</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span style="font-family:'Jua',sans-serif;font-size:22px;color:var(--tx);">채림 스튜디오</span>
+            <span class="pctag cr" style="margin:0;">창작자</span>
+            <span class="kolabi-badge">🌿 새싹</span>
+          </div>
+          <div style="font-size:13px;color:var(--t3);margin-top:3px;font-family:'Nunito',sans-serif;">📍 마포구 연남동 · 일러스트레이터</div>
+        </div>
+      </div>
+      <div style="margin-top:12px;font-size:13px;line-height:1.8;color:var(--t2);font-family:'Nunito',sans-serif;">
+        감성 일러스트와 굿즈 기획 전문 창작자예요. 브랜드 아이덴티티를 살린 협업 파트너를 찾고 있어요! ☺️
+      </div>
+      <div class="tag-row">
+        <span class="ftag">#굿즈제작</span><span class="ftag">#팝업스토어</span><span class="ftag">#일러스트</span><span class="ftag">#브랜딩</span><span class="ftag">#엽서</span>
+      </div>
+    </div>
+
+    <!-- ★ 원하는 협업 내용 - 보기 전용 (수정 불가) -->
+    <div class="collab-want-box">
+      <div class="collab-want-label"><span>💬 원하는 협업 내용</span></div>
+      <div class="collab-want-text">
+        카페나 편집숍 공간을 보유하신 소상공인분과 함께 시즌 굿즈 팝업을 기획하고 싶어요. 일러스트 굿즈(엽서, 스티커, 에코백 등)를 매장에서 판매하거나, 벽 드로잉·포스터 제작 협업도 환영합니다. 단기 팝업보다는 지속 가능한 파트너십을 선호해요 🌿
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-t">💼 협업 조건</div>
+      <div class="srow"><span class="srow-lb">희망 수익 배분</span><span class="srow-v">20% 내외</span></div>
+      <div class="srow"><span class="srow-lb">플랫폼+PG 수수료</span><span class="srow-v">총 10% 차감</span></div>
+      <div class="srow" style="border:none;"><span class="srow-lb">선호 협업 형태</span><span class="srow-v">팝업, 굿즈, 전시</span></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-t">📂 완료된 협업</div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd);">
+        <span style="font-size:28px;">🎪</span>
+        <div style="flex:1;"><div style="font-family:'Jua',sans-serif;font-size:13px;color:var(--tx);">봄 팝업스토어 @ 브레드카페</div><div style="font-size:11px;color:var(--t3);margin-top:2px;font-family:'Nunito',sans-serif;">2024.03 · 굿즈 판매</div></div>
+        <span class="sbadge dn">완료</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+        <span style="font-size:28px;">🎨</span>
+        <div style="flex:1;"><div style="font-family:'Jua',sans-serif;font-size:13px;color:var(--tx);">카페 계절 일러스트 제작</div><div style="font-size:11px;color:var(--t3);margin-top:2px;font-family:'Nunito',sans-serif;">진행 중</div></div>
+        <span class="sbadge og">진행중</span>
+      </div>
+    </div>
+  </div>
+  <div class="dfoot">
+    <button class="btn-s">💬 채팅</button>
+    <button class="btn-p" onclick="go('pcreate')">🤝 협업 제안하기</button>
+  </div>
+</div>
+
+<!-- ===== PROJECT CREATE ===== -->
+<div class="screen" id="pcreate">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="dhd">
+    <span class="bk" onclick="go('detail')">‹</span>
+    <span class="dht">협업 제안서 작성</span>
+  </div>
+  <div class="pcreate">
+    <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:14px;">
+      <div class="sec-t">협업 내용</div>
+      <div><div class="field-lb">프로젝트명</div><input class="field-input" value="여름 팝업스토어 협업 제안" readonly/></div>
+      <div><div class="field-lb">기간</div><input class="field-input" value="2024.07.01 ~ 2024.07.31" readonly/></div>
+      <div><div class="field-lb">제안 내용</div><textarea class="field-textarea" readonly>카페 공간에서 여름 시즌 팝업스토어를 열고 싶어요. 일러스트 굿즈와 음료를 함께 판매하는 콘셉트입니다 ☀️</textarea></div>
+    </div>
+    <div class="card" style="padding:18px;">
+      <div class="sec-t">📁 포트폴리오 첨부</div>
+      <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;margin-bottom:12px;">작업물이나 포트폴리오를 첨부하면 협업 성사 가능성이 높아져요!</div>
+      <div class="uploaded-files" id="fileList">
+        <div class="file-item"><div class="file-icon">🖼</div><div class="file-info"><div class="file-name">채림_포트폴리오_2024.pdf</div><div class="file-size">PDF · 3.2MB</div></div><div class="file-del" onclick="removeFile(this)">✕</div></div>
+      </div>
+      <div class="upload-zone" style="margin-top:12px;" onclick="addFile()">
+        <div class="upload-icon">📤</div><div class="upload-title">파일 추가하기</div>
+        <div class="upload-sub">이미지, PDF, 링크 등을 첨부할 수 있어요</div>
+        <div class="upload-types"><span class="upload-type">JPG/PNG</span><span class="upload-type">PDF</span><span class="upload-type">링크</span></div>
+      </div>
+    </div>
+    <div class="card" style="padding:18px;">
+      <div class="sec-t">💰 희망 수익 배분</div>
+      <div class="revenue-simple">
+        <div style="font-family:'Jua',sans-serif;font-size:13px;color:var(--gt);margin-bottom:6px;">🎨 창작자 (나의 희망 배분)</div>
+        <div class="revenue-hope-row">
+          <span class="revenue-hope-label">최소</span>
+          <input type="range" class="revenue-slider" min="10" max="50" value="20" oninput="updateRevenue(this.value)" id="revenueSlider"/>
+          <span class="revenue-hope-label">최대</span>
+          <span class="revenue-value" id="revenueVal">20%</span>
+        </div>
+        <div class="revenue-notice">💡 <strong>최종 수익 배분은 매칭 후 계약 시 협의해요!</strong><br>여기서 설정하는 건 희망 비율이에요. 실제 비율은 파트너와 직접 만나 계약할 때 서로 협의해서 정해요 🤝</div>
+      </div>
+    </div>
+    <button class="btn-p" onclick="go('projects')" style="padding:18px;border-radius:20px;font-size:17px;">🚀 제안서 보내기</button>
+  </div>
+</div>
+
+<!-- ===== PROJECTS ===== -->
+<div class="screen" id="projects">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="prjhd">
+    <div class="logo-svg-wrap">
+      <svg width="26" height="26" viewBox="0 0 48 48"><use href="#kolabiLogo"/></svg>
+      <span class="brand-txt">프로젝트</span>
+    </div>
+    <div class="prjtabs"><div class="prjt act">진행중</div><div class="prjt">완료</div><div class="prjt">제안받음</div></div>
+  </div>
+  <div class="prjlist">
+    <div class="prjcard">
+      <div class="prjc-hd">
+        <div class="prjc-em">🎪</div>
+        <div style="flex:1;"><div class="prjc-name">여름 팝업스토어 협업</div><div class="prjc-par">with 브레드카페 · 마포구</div></div>
+        <div class="sbadge og">진행중</div>
+      </div>
+      <div class="prjc-bd">
+        <div style="font-size:12px;color:var(--t3);font-family:'Nunito',sans-serif;">📅 2024.07.01 ~ 07.31</div>
+        <div class="pbar-wrap"><div class="pbar-row"><span>진행률</span><span>65%</span></div><div class="pbar-bg"><div class="pbar-fill" style="width:65%"></div></div></div>
+        <div class="rev-row"><div class="rev-i"><div class="rev-lb">누적 판매</div><div class="rev-v">₩1,240,000</div></div><div class="rev-i"><div class="rev-lb">내 수익 예상 (20%)</div><div class="rev-v" style="color:var(--gd);">₩223,200</div></div></div>
+        <div class="prj-btns"><button class="prj-btn s">📊 정산 현황</button><button class="prj-btn p">💬 채팅하기</button></div>
+      </div>
+    </div>
+    <div class="settle-card">
+      <div class="sec-t">💰 해당 프로젝트 정산</div>
+      <div class="settle-project-badge">🎪 여름 팝업스토어 협업</div>
+      <div class="srow"><span class="srow-lb">총 거래 금액</span><span class="srow-v">₩1,240,000</span></div>
+      <div class="srow"><span class="srow-lb">플랫폼+PG 수수료 (10%)</span><span class="srow-v" style="color:#E53E3E;">− ₩124,000</span></div>
+      <div class="srow"><span class="srow-lb">수수료 제외 금액</span><span class="srow-v">₩1,116,000</span></div>
+      <div class="srow" style="border:none;padding-top:12px;"><span style="font-family:'Jua',sans-serif;font-size:14px;color:var(--tx);">내 정산 예정액 (계약 20%)</span><span class="srow-v" style="color:var(--gd);font-size:15px;">₩223,200</span></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="nav(this,'mapscreen')"><div class="ni-ic">🗺</div><div class="ni-lb">홈</div></div>
+    <div class="ni" onclick="nav(this,'explore')"><div class="ni-ic">🔍</div><div class="ni-lb">탐색</div></div>
+    <div class="ni act" onclick="nav(this,'projects')"><div class="ni-ic">📋</div><div class="ni-lb">프로젝트</div></div>
+    <div class="ni" onclick="nav(this,'chats')"><div class="ni-ic">💬</div><div class="ni-lb">채팅</div></div>
+    <div class="ni" onclick="nav(this,'mypage')"><div class="ni-ic">👤</div><div class="ni-lb">마이</div></div>
+  </div>
+</div>
+
+<!-- ===== CHAT ===== -->
+<div class="screen" id="chats">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="chthd">
+    <div class="logo-svg-wrap">
+      <svg width="26" height="26" viewBox="0 0 48 48"><use href="#kolabiLogo"/></svg>
+      <span class="brand-txt">채팅</span>
+    </div>
+  </div>
+  <div class="chtlist">
+    <div class="chti"><div class="chtav p">☕</div><div class="cht-info"><div class="cht-name">브레드카페</div><div class="cht-pre">팝업 날짜 확정됐어요! 7월 5일부터 시작하면 어떨까요? 🎉</div></div><div class="cht-meta"><div class="cht-time">오후 2:34</div><div class="cht-badge">2</div></div></div>
+    <div class="chti"><div class="chtav g">🛍</div><div class="cht-info"><div class="cht-name">소품달</div><div class="cht-pre">제안서 검토 중이에요 :) 조금만 기다려 주세요!</div></div><div class="cht-meta"><div class="cht-time">어제</div></div></div>
+    <div class="cht-sys"><div style="font-size:30px;">🌱</div><div><div style="font-family:'Jua',sans-serif;font-size:13px;color:#2a2a2a;">콜라비 지수 업데이트!</div><div style="font-size:12px;color:#444;margin-top:3px;font-family:'Nunito',sans-serif;">브레드카페 협업 완료로 '새싹' 달성 🌿</div></div></div>
+    <div class="chti"><div class="chtav g">✏️</div><div class="cht-info"><div class="cht-name">다온 일러스트</div><div class="cht-pre">함께 작업한 엽서 진짜 잘 팔렸대요~ 다음에 또 해요!</div></div><div class="cht-meta"><div class="cht-time">2일 전</div></div></div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="nav(this,'mapscreen')"><div class="ni-ic">🗺</div><div class="ni-lb">홈</div></div>
+    <div class="ni" onclick="nav(this,'explore')"><div class="ni-ic">🔍</div><div class="ni-lb">탐색</div></div>
+    <div class="ni" onclick="nav(this,'projects')"><div class="ni-ic">📋</div><div class="ni-lb">프로젝트</div></div>
+    <div class="ni act" onclick="nav(this,'chats')"><div class="ni-ic">💬</div><div class="ni-lb">채팅</div></div>
+    <div class="ni" onclick="nav(this,'mypage')"><div class="ni-ic">👤</div><div class="ni-lb">마이</div></div>
+  </div>
+</div>
+
+<!-- ===== MYPAGE ===== -->
+<div class="screen" id="mypage">
+  <div class="status"><span class="status-time">9:41</span><div class="status-icons"><span>●●●</span><span>WiFi</span><span>🔋</span></div></div>
+  <div class="myhd">
+    <div class="logo-svg-wrap">
+      <svg width="26" height="26" viewBox="0 0 48 48"><use href="#kolabiLogo"/></svg>
+      <span class="brand-txt">마이페이지</span>
+    </div>
+  </div>
+  <div class="mycontent">
+    <div class="profsec">
+      <div class="profav">🎨</div>
+      <div>
+        <div class="prof-name">채림 스튜디오</div>
+        <div class="prof-type">🎨 창작자 · 마포구 연남동</div>
+        <div class="prof-tags"><span class="ptag-s">#일러스트</span><span class="ptag-s">#굿즈</span><span class="ptag-s">#팝업</span></div>
+      </div>
+    </div>
+    <div class="kicard">
+      <div class="ki-hd">
+        <div><div style="font-size:12px;color:var(--t3);font-weight:700;font-family:'Nunito',sans-serif;">나의 콜라비 지수</div><div class="ki-score">78<span> / 100</span></div></div>
+        <div class="ki-badge-box"><span style="font-size:26px;">🌿</span><div><div style="font-family:'Jua',sans-serif;font-size:14px;color:var(--gt);">새싹</div><div style="font-size:10px;color:var(--gd);font-family:'Nunito',sans-serif;">다음 단계: 성장 🌱</div></div></div>
+      </div>
+      <div class="kp" style="margin:4px 6px 18px;">
+        <div class="klin"><div class="klf"></div></div>
+        <div class="kstep"><div class="kic done">🌰</div><div class="klb on">씨앗</div></div>
+        <div class="kstep"><div class="kic cur">🌿</div><div class="klb on">새싹</div></div>
+        <div class="kstep"><div class="kic">🌱</div><div class="klb">성장</div></div>
+        <div class="kstep"><div class="kic">🥬</div><div class="klb">콜라비</div></div>
+      </div>
+      <div class="ki-stats">
+        <div class="ki-s"><div class="ki-s-lb">완료 프로젝트</div><div class="ki-s-v">3건</div></div>
+        <div class="ki-s"><div class="ki-s-lb">약속 이행률</div><div class="ki-s-v">100%</div></div>
+        <div class="ki-s"><div class="ki-s-lb">소통 점수</div><div class="ki-s-v">4.8 ⭐</div></div>
+        <div class="ki-s"><div class="ki-s-lb">총 정산액</div><div class="ki-s-v" style="color:var(--gd);">₩62만</div></div>
+      </div>
+    </div>
+    <div class="menusec">
+      <div class="mitem"><div class="mic">📝</div><div class="mlb">내 프로필 편집</div><div class="mar">›</div></div>
+      <div class="mitem"><div class="mic">❤️</div><div class="mlb">찜한 파트너</div><div class="mar">›</div></div>
+      <div class="mitem"><div class="mic">💰</div><div class="mlb">정산 내역</div><div class="mar">›</div></div>
+      <div class="mitem"><div class="mic">📋</div><div class="mlb">계약서 관리</div><div class="mar">›</div></div>
+      <div class="mitem"><div class="mic">⚙️</div><div class="mlb">설정</div><div class="mar">›</div></div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="ni" onclick="nav(this,'mapscreen')"><div class="ni-ic">🗺</div><div class="ni-lb">홈</div></div>
+    <div class="ni" onclick="nav(this,'explore')"><div class="ni-ic">🔍</div><div class="ni-lb">탐색</div></div>
+    <div class="ni" onclick="nav(this,'projects')"><div class="ni-ic">📋</div><div class="ni-lb">프로젝트</div></div>
+    <div class="ni" onclick="nav(this,'chats')"><div class="ni-ic">💬</div><div class="ni-lb">채팅</div></div>
+    <div class="ni act" onclick="nav(this,'mypage')"><div class="ni-ic">👤</div><div class="ni-lb">마이</div></div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function nav(el, id) {
+  go(id);
+  const screen = document.getElementById(id);
+  const label = el.querySelector('.ni-lb').textContent;
+  screen.querySelectorAll('.ni').forEach(n => { n.classList.remove('act'); if (n.querySelector('.ni-lb')?.textContent === label) n.classList.add('act'); });
+}
+
+// ───── 하트(찜) 토글 ─────
+function toggleHeart(e, el) {
+  e.stopPropagation();
+  el.classList.toggle('liked');
+  if (el.classList.contains('liked')) {
+    el.textContent = '❤️';
+    el.style.transform = 'scale(1.15)';
+    setTimeout(()=>{ el.style.transform='scale(1)'; }, 150);
+  } else {
+    el.textContent = '🤍';
+  }
+}
+
+// ───── 지도 카테고리 필터 ─────
+function filterMap(type) {
+  document.getElementById('mapChipAll').classList.remove('ag','cr-on','ow-on');
+  document.getElementById('mapChipCr').classList.remove('ag','cr-on','ow-on');
+  document.getElementById('mapChipOw').classList.remove('ag','cr-on','ow-on');
+
+  const crPins = document.querySelectorAll('.cr-pin');
+  const owPins = document.querySelectorAll('.ow-pin');
+  const crCards = document.querySelectorAll('.cr-card');
+  const owCards = document.querySelectorAll('.ow-card');
+  const bsTitle = document.getElementById('bsTitle');
+
+  if (type === 'all') {
+    document.getElementById('mapChipAll').classList.add('ag');
+    crPins.forEach(p=>p.classList.remove('hidden'));
+    owPins.forEach(p=>p.classList.remove('hidden'));
+    crCards.forEach(c=>c.classList.remove('hidden'));
+    owCards.forEach(c=>c.classList.remove('hidden'));
+    bsTitle.textContent = '근처 파트너 6명';
+  } else if (type === 'cr') {
+    document.getElementById('mapChipCr').classList.add('ag','cr-on');
+    crPins.forEach(p=>p.classList.remove('hidden'));
+    owPins.forEach(p=>p.classList.add('hidden'));
+    crCards.forEach(c=>c.classList.remove('hidden'));
+    owCards.forEach(c=>c.classList.add('hidden'));
+    bsTitle.textContent = '근처 창작자 3명';
+  } else if (type === 'ow') {
+    document.getElementById('mapChipOw').classList.add('ag','ow-on');
+    crPins.forEach(p=>p.classList.add('hidden'));
+    owPins.forEach(p=>p.classList.remove('hidden'));
+    crCards.forEach(c=>c.classList.add('hidden'));
+    owCards.forEach(c=>c.classList.remove('hidden'));
+    bsTitle.textContent = '근처 소상공인 3명';
+  }
+}
+
+// ───── 탐색 카테고리 필터 ─────
+function filterExplore(type) {
+  document.getElementById('exChipAll').classList.remove('ag','cr-on','ow-on');
+  document.getElementById('exChipCr').classList.remove('ag','cr-on','ow-on');
+  document.getElementById('exChipOw').classList.remove('ag','cr-on','ow-on');
+
+  const crItems = document.querySelectorAll('.cr-item');
+  const owItems = document.querySelectorAll('.ow-item');
+  const exCount = document.getElementById('exCount');
+
+  if (type === 'all') {
+    document.getElementById('exChipAll').classList.add('ag');
+    crItems.forEach(c=>c.classList.remove('hidden'));
+    owItems.forEach(c=>c.classList.remove('hidden'));
+    exCount.textContent = '총 24명의 파트너';
+  } else if (type === 'cr') {
+    document.getElementById('exChipCr').classList.add('ag','cr-on');
+    crItems.forEach(c=>c.classList.remove('hidden'));
+    owItems.forEach(c=>c.classList.add('hidden'));
+    exCount.textContent = '창작자 14명';
+  } else if (type === 'ow') {
+    document.getElementById('exChipOw').classList.add('ag','ow-on');
+    crItems.forEach(c=>c.classList.add('hidden'));
+    owItems.forEach(c=>c.classList.remove('hidden'));
+    exCount.textContent = '소상공인 10명';
+  }
+}
+
+function toggleFilter() {
+  const p = document.getElementById('filterPanel');
+  p.style.display = (p.style.display === 'none' || !p.style.display) ? 'flex' : 'none';
+}
+function toggleFchip(el) {
+  el.classList.toggle('on');
+  if (el.classList.contains('on')) { el.style.background='var(--g)'; el.style.borderColor='var(--gd)'; el.style.color='var(--gt)'; }
+  else { el.style.background='#fff'; el.style.borderColor='var(--bd)'; el.style.color='var(--t2)'; }
+}
+
+function updateRevenue(val) { document.getElementById('revenueVal').textContent = val + '%'; }
+
+function removeFile(el) { el.closest('.file-item').remove(); }
+const sampleFiles = [{icon:'🖼',name:'작업샘플.png',size:'이미지 · 2.4MB'},{icon:'📄',name:'제안서.pptx',size:'PPT · 5.1MB'}];
+let fileIdx = 0;
+function addFile() {
+  if (fileIdx >= sampleFiles.length) fileIdx = 0;
+  const f = sampleFiles[fileIdx++];
+  const list = document.getElementById('fileList');
+  const item = document.createElement('div');
+  item.className = 'file-item';
+  item.innerHTML = `<div class="file-icon">${f.icon}</div><div class="file-info"><div class="file-name">${f.name}</div><div class="file-size">${f.size}</div></div><div class="file-del" onclick="removeFile(this)">✕</div>`;
+  list.appendChild(item);
+}
+</script>
+</body>
+</html>
